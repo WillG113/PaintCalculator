@@ -43,11 +43,32 @@ public class Main {
     //Walls Calc.
         System.out.println("How many walls need to be painted?");
         int amountWalls = input.nextInt();
+
+        System.out.println("Are all of the walls the same height? Y/N");
+        input.nextLine(); //Clears the scanner line
+        String decision = input.nextLine();
+
+        boolean sameHeight = false;
+        double allHeight = 0.0;
+
+        if(decision.equals("Y")) {
+            sameHeight = true;
+            System.out.println("What are the height of all the walls?");
+            allHeight = input.nextDouble();
+        } // Will add input validation later, for now it assumes anything other than Y is an N
+
         double totalArea = 0;
 
         for(int i = 1; i != amountWalls; i++) {
-            System.out.println("What is the height of wall " + i + "?");
-            double wallHeight = input.nextDouble();
+
+            double wallHeight;
+
+            if(!sameHeight) {
+                System.out.println("What is the height of wall " + i + "?");
+                wallHeight = input.nextDouble();
+            } else {
+                wallHeight = allHeight;
+            }
 
             System.out.println("What is the width of wall " + i + "?");
             double wallWidth = input.nextDouble();
