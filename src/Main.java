@@ -4,22 +4,32 @@ public class Main {
 
     public static void main(String[] args) {
 
-    // Calculations assumes walls are completely rectangular/square
-    // It is assumed that each wall will be the same colour
-    // Walls, windows, ceiling etc., are ignored in this instance
+        // Calculations assumes walls are completely rectangular/square
+        // It is assumed that each wall will be the same colour
+        // Walls, windows, ceiling etc., are ignored in this instance
+
+        double totalArea = wallsCalc();
+
+        double[] paintValues = paintCalc(totalArea);
+
+       double[] laborValues = laborCalc();
+
+        output(paintValues, laborValues);
+
+    }
+
+    public static double wallsCalc() {
 
         Scanner input = new Scanner(System.in);
-
-    //Walls Calc.
 
         System.out.println("How many walls need to be painted?");
         int amountWalls = input.nextInt();
 
-        System.out.println("Are all of the walls the same height? Y/N");
-        input.nextLine(); //Clears the scanner line
-
         boolean sameHeight = false;
         double allHeight = -1.0;
+
+        System.out.println("Are all of the walls the same height? Y/N");
+        input.nextLine(); //Clears the scanner line
 
         while(allHeight < 0.0) {
             switch (input.nextLine().toUpperCase()) {
@@ -58,7 +68,12 @@ public class Main {
             totalArea += wallArea;
         }
 
-    //Paint Calc.
+        return totalArea;
+    }
+
+    public static double[] paintCalc(double totalArea) {
+
+        Scanner input = new Scanner(System.in);
 
         System.out.println("How many layers of paint are you applying?");
         int paintLayers = input.nextInt();
@@ -89,7 +104,12 @@ public class Main {
         double noPaintCans = Math.ceil(totalCoverage / canCoverage);
         double paintCost = noPaintCans * pricePaintCans;
 
-    //Labor Calc.
+        return new double[] {noPaintCans, pricePaintCans, paintCost};
+    }
+
+    public static double[] laborCalc() {
+
+        Scanner input = new Scanner(System.in);
 
         System.out.println("How many hours of work will the project require?");
         double hoursRequired = input.nextDouble();
@@ -99,25 +119,29 @@ public class Main {
 
         double laborCost = hoursRequired * hourlyRate;
 
-    //Output
+        return new double[] {hoursRequired, hourlyRate, laborCost};
+    }
+
+    public static void output(double[] paintValues, double[] laborValues) {
+        //Output
 
         System.out.println();
         System.out.println("--- PAINT ---");
 
-        System.out.println("Number of paint cans required - " + noPaintCans);
-        System.out.println("Price per paint can - £" + pricePaintCans);
-        System.out.println("Total cost of paint - £" + String.format("%.2f", (paintCost)));
+        System.out.println("Number of paint cans required - " + paintValues[0]);
+        System.out.println("Price per paint can - £" + paintValues[1]);
+        System.out.println("Total cost of paint - £" + String.format("%.2f", (paintValues[2])));
 
         System.out.println();
         System.out.println("--- LABOR ---");
 
-        System.out.println("Number of hours to work - " + hoursRequired);
-        System.out.println("Price per hour - £" + hourlyRate);
-        System.out.println("Total cost of labor - £" + String.format("%.2f", (laborCost)));
+        System.out.println("Number of hours to work - " + laborValues[0]);
+        System.out.println("Price per hour - £" + laborValues[1]);
+        System.out.println("Total cost of labor - £" + String.format("%.2f", (laborValues[2])));
 
         System.out.println();
         System.out.println("--- TOTAL ---");
 
-        System.out.println("Total cost of project - £" + String.format("%.2f", (paintCost + laborCost)));
+        System.out.println("Total cost of project - £" + String.format("%.2f", (paintValues[2] + laborValues[2])));
     }
 }
