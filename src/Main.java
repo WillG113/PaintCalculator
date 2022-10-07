@@ -59,7 +59,7 @@ public class Main {
 
         double totalArea = 0;
 
-        for(int i = 1; i != amountWalls; i++) {
+        for(int i = 1; i < amountWalls + 1; i++) {
 
             double wallHeight;
 
