@@ -21,24 +21,26 @@ public class Main {
     public static double wallsCalc() {
 
         Scanner input = new Scanner(System.in);
+        boolean sameHeight = false;
+        double allHeight = 0.0;
+        boolean decisionMade = false;
 
         System.out.println("How many walls need to be painted?");
         int amountWalls = input.nextInt();
 
-        boolean sameHeight = false;
-        double allHeight = -1.0;
-
         System.out.println("Are all of the walls the same height? Y/N");
         input.nextLine(); //Clears the scanner line
 
-        while(allHeight < 0.0) {
+        while(!decisionMade) {
             switch (input.nextLine().toUpperCase()) {
                 case "Y" -> {
+                    decisionMade = true;
                     sameHeight = true;
                     System.out.println("What are the height of all the walls?");
                     allHeight = input.nextDouble();
                 }
                 case "N" -> {
+                    decisionMade = true;
                     sameHeight = false;
                     allHeight = 0.0;
                 }
@@ -50,22 +52,22 @@ public class Main {
 
         for(int i = 1; i < amountWalls + 1; i++) {
 
-            double wallHeight;
+            Wall wallObject = new Wall();
 
             if(!sameHeight) {
                 System.out.println("What is the height of wall " + i + "?");
-                wallHeight = input.nextDouble();
+                wallObject.setWallHeight(input.nextDouble());
             } else {
-                wallHeight = allHeight;
+                wallObject.setWallHeight(allHeight);
             }
 
             System.out.println("What is the width of wall " + i + "?");
-            double wallWidth = input.nextDouble();
+            wallObject.setWallWidth(input.nextDouble());
 
-            double wallArea = wallHeight * wallWidth;
+            double wallArea = wallObject.surfaceArea();
+            totalArea += wallArea;
 
             System.out.println("Wall " + i + " has a surface area of " + wallArea);
-            totalArea += wallArea;
         }
 
         return totalArea;
@@ -82,9 +84,9 @@ public class Main {
         double pricePaintCans = 0.0;
 
         System.out.println("What quality of paint will be used?");
-        System.out.println("Enter 1 for Cheap");
-        System.out.println("Enter 2 for Standard");
-        System.out.println("Enter 3 for Expensive");
+        System.out.println("Enter 1 for Cheap Paint");
+        System.out.println("Enter 2 for Standard Paint");
+        System.out.println("Enter 3 for Expensive Paint");
         input.nextLine();
 
         while(pricePaintCans == 0.0) {
@@ -111,7 +113,7 @@ public class Main {
 
         Scanner input = new Scanner(System.in);
 
-        System.out.println("How many hours of work will the project require?");
+        System.out.println("Approximately how many hours of work will the project require?");
         double hoursRequired = input.nextDouble();
 
         System.out.println("What is your hourly rate? (£)");
@@ -136,7 +138,7 @@ public class Main {
         System.out.println("--- LABOR ---");
 
         System.out.println("Number of hours to work - " + laborValues[0]);
-        System.out.println("Price per hour - £" + laborValues[1]);
+        System.out.println("Price per hour - £" + String.format("%.2f", (laborValues[1]));
         System.out.println("Total cost of labor - £" + String.format("%.2f", (laborValues[2])));
 
         System.out.println();
