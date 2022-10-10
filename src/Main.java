@@ -20,6 +20,7 @@ public class Main {
 
     public static double wallsCalc() {
 
+
         Scanner input = new Scanner(System.in);
         boolean sameHeight = false;
         double allHeight = 0.0;
@@ -41,7 +42,6 @@ public class Main {
                 }
                 case "N" -> {
                     decisionMade = true;
-                    sameHeight = false;
                     allHeight = 0.0;
                 }
                 default -> System.out.println("Please enter a valid value");
@@ -63,25 +63,26 @@ public class Main {
 
             System.out.println("What is the width of wall " + i + "?");
             wallObject.setWallWidth(input.nextDouble());
-
+// 8.5 14.6
             double wallArea = wallObject.surfaceArea();
             totalArea += wallArea;
 
             System.out.println("Wall " + i + " has a surface area of " + wallArea);
         }
 
+        totalArea -= obstructionsCalc();
         return totalArea;
     }
 
     public static double[] paintCalc(double totalArea) {
 
+        Paint paint = new Paint();
         Scanner input = new Scanner(System.in);
 
         System.out.println("How many layers of paint are you applying?");
-        int paintLayers = input.nextInt();
+        paint.setPaintLayers(input.nextInt());
 
-        int canCoverage = 371612; //Apparent coverage of a gallon paint can in cm
-        double pricePaintCans = 0.0;
+        boolean decisionMade = false;
 
         System.out.println("What quality of paint will be used?");
         System.out.println("Enter 1 for Cheap Paint");
@@ -89,24 +90,31 @@ public class Main {
         System.out.println("Enter 3 for Expensive Paint");
         input.nextLine();
 
-        while(pricePaintCans == 0.0) {
-            pricePaintCans = switch (input.nextInt()) {
-                case 1 -> 27.54;
-                case 2 -> 65.54;
-                case 3 -> 98.54;
-                default -> 0.0;
-            };
+        while(!decisionMade) {
+            switch (input.nextInt()) {
+                case 1 -> {
+                    paint.setPaintPrice(23.65);
+                    decisionMade = true;
+                }
+                case 2 -> {
+                    paint.setPaintPrice(46.66);
+                    decisionMade = true;
+                }
+                case 3 -> {
+                    paint.setPaintPrice(83.54);
+                    decisionMade = true;
+                }
+            }
 
-            if(pricePaintCans == 0.0) {
+            if(!decisionMade) {
                 System.out.println("Please enter a valid value");
             }
         }
 
-        double totalCoverage = totalArea * paintLayers;
-        double noPaintCans = Math.ceil(totalCoverage / canCoverage);
-        double paintCost = noPaintCans * pricePaintCans;
+        paint.noPaintCans(totalArea);
+        double paintCost = paint.totalPaintCost();
 
-        return new double[] {noPaintCans, pricePaintCans, paintCost};
+        return new double[] {paint.getNoPaintCans(), paint.getPaintPrice(), paintCost};
     }
 
     public static double[] laborCalc() {
@@ -124,6 +132,56 @@ public class Main {
         return new double[] {hoursRequired, hourlyRate, laborCost};
     }
 
+    public static double obstructionsCalc() {
+        Scanner input = new Scanner(System.in);
+        int inputValue;
+        double obstructionArea = 0;
+
+        //WINDOWS -- For now we are assuming all the windows are the average size
+        System.out.println("How many windows are in the room?");
+        inputValue = input.nextInt();
+        if(inputValue > 0) {
+            Window window = new Window();
+            obstructionArea += window.totalWindowArea(inputValue);
+        }
+
+        //DOORS
+        System.out.println("How many doors are in the room?");
+        inputValue = input.nextInt();
+        if(inputValue > 0) {
+            Door door = new Door();
+            obstructionArea -= door.totalDoorArea(inputValue);
+        }
+
+        //OTHER OBSTACLES -- Definitely needs improvement, for now we assume that every lightswitch will be the sme size etc.
+        System.out.println("How many other types of obstructions are there? e.g light switch, radiator, etc.");
+        int uniqueObstrucations = input.nextInt();
+        input.nextLine();
+
+        for (int i = 0;  i < uniqueObstrucations; i++) {
+            Obstacle obstacle = new Obstacle();
+
+            System.out.println("What type of obstacle is obstacle " + (i + 1) + "? e.g Lightswitch");
+            obstacle.setObstacleName(input.nextLine());
+
+            System.out.println("What is the height of the " + obstacle.getObstacleName() + "?");
+            obstacle.setObstacleHeight(input.nextDouble());
+
+            System.out.println("What is the width of the " + obstacle.getObstacleName() + "?");
+            obstacle.setObstacleWidth(input.nextDouble());
+
+            obstacle.obstacleArea();
+
+            System.out.println("How many " + obstacle.getObstacleName() + " are there in the room?");
+            obstacle.setAmount(input.nextInt());
+z
+            input.nextLine();
+
+            obstructionArea += obstacle.totalObstacleArea();
+        }
+        return obstructionArea;
+    }
+
     public static void output(double[] paintValues, double[] laborValues) {
         //Output
 
@@ -138,7 +196,7 @@ public class Main {
         System.out.println("--- LABOR ---");
 
         System.out.println("Number of hours to work - " + laborValues[0]);
-        System.out.println("Price per hour - £" + String.format("%.2f", (laborValues[1]));
+        System.out.println("Price per hour - £" + String.format("%.2f", (laborValues[1])));
         System.out.println("Total cost of labor - £" + String.format("%.2f", (laborValues[2])));
 
         System.out.println();
